@@ -2,9 +2,14 @@
 # vi: set ft=ruby :
 
 Vagrant::Config.run do |config|
-  # Set box configuration
-  config.vm.box = "lucid32"
-  config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
+  # Set box configuration for Ubuntu Server Quantal 32bit
+  config.vm.box = "quantald32"
+  config.vm.box_url = ""
+
+  # Set box configuration for Ubuntu Server Quantal 64bit
+  #config.vm.box = "quantald64"
+  #config.vm.box_url = ""
+
 
   # Assign this VM to a host-only network IP, allowing you to access it via the
   # IP.
