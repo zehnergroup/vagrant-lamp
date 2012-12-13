@@ -6,6 +6,24 @@ include_recipe "mysql::server"
 include_recipe "php"
 include_recipe "apache2::mod_php5"
 
+# Update Apache's user and group
+# I couldn't found an easear way and I don't want to edit opscode's cookbook
+bash "update_apache_user_group" do
+  user "root"
+  cwd  "#{node['apache']['dir']}"
+  code <<-EOH
+  cat /etc/apache2/apache2.conf |
+  sed 's/User www-data/User vagrant/g' |
+  sed 's/Group www-data/Group vagrant/g' \
+  > apache2.conf.tmp
+  mv apache2.conf.tmp apache2.conf
+  EOH
+end
+service "apache2" do
+  supports :restart => true, :reload => true
+  action :enable
+end
+
 # Install packages
 %w{ debconf }.each do |a_package|
   package a_package
