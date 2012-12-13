@@ -56,10 +56,33 @@ sites.each do |name|
     docroot "/home/vagrant/#{site["host"]}"
   end
 
-   # Add site info in /etc/hosts
-   bash "hosts" do
-     code "echo 127.0.0.1 #{site["host"]} #{site["aliases"].join(' ')} >> /etc/hosts"
-   end
+  # Dummy index page
+  directory "/home/vagrant/#{site["host"]}" do
+    owner "vagrant"
+    group "vagrant"
+    mode 0755
+    action :create
+  end
+  template "/home/vagrant/#{site["host"]}/index.php" do
+    source "index.php.erb"
+    owner "vagrant"
+    group "vagrant"
+    mode "0644"
+    action :create
+    variables(
+      :server_name => site["host"],
+      :server_aliases => site["aliases"],
+      :docroot => "/home/vagrant/#{site["host"]}"
+    )
+    not_if do
+       not Dir["/home/vagrant/#{site["host"]}/*"].empty?
+    end
+  end
+
+  # Add site info in /etc/hosts
+  bash "hosts" do
+    code "echo 127.0.0.1 #{site["host"]} #{site["aliases"].join(' ')} >> /etc/hosts"
+  end
 end
 
 # Disable default site
